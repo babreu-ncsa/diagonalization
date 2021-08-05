@@ -1,7 +1,7 @@
 !!!!
 !! File: diagonalize_zheev.f90
 !! Description: Diagonalization of a HERMITEAN matrix using LAPACK's ZHEEV routine
-!!              http://www.netlib.org/lapack/explore-html/df/d9a/               group__complex16_h_eeigen_gaf23fb5b3ae38072ef4890ba43d5cfea2.html
+!!              http://www.netlib.org/lapack/explore-html/df/d9a/group__complex16_h_eeigen_gaf23fb5b3ae38072ef4890ba43d5cfea2.html
 !! Author: Bruno R. de Abreu  |  babreu at illinois dot edu
 !! National Center for Supercomputing Applications (NCSA)
 !!  
