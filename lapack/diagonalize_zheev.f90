@@ -6,7 +6,7 @@
 !! National Center for Supercomputing Applications (NCSA)
 !!  
 !! Creation Date: Thursday, 5th August 2021, 9:07:40 am
-!! Last Modified: Thursday, 5th August 2021, 9:24:12 am
+!! Last Modified: Monday, 9th August 2021, 12:39:12 pm
 !!  
 !! Copyright (c) 2021, Bruno R. de Abreu, National Center for Supercomputing Applications.
 !! All rights reserved.
@@ -27,59 +27,49 @@
 program diagonalize
     implicit none
     integer :: order
-    parameter (order = 3)
+    parameter (order = 100)
     complex*16, allocatable :: matrix(:,:), eigvecs(:,:)
     real*8, allocatable :: eigvals(:)
-
     integer :: i,j
 
     allocate(matrix(order,order))
     allocate(eigvecs(order,order))
     allocate(eigvals(order))
 
-    do j=1,order
-        do i=1,order
-            matrix(i,j) = (0.0,0.0)
-        enddo
-    enddo
+    matrix = (1.0, 0.0)
 
-    !! Sy for S = 1
-    matrix(1,1) = (0.00, 0.00)
-    matrix(1,2) = (1.00, 0.00)
-    matrix(1,3) = (0.00, 0.00)
-    matrix(2,1) = (-1.00, 0.00)
-    matrix(2,2) = (0.00, 0.00)
-    matrix(2,3) = (1.00, 0.00)
-    matrix(3,1) = (0.00, 0.00)
-    matrix(3,2) = (-1.00, 0.00)
-    matrix(3,3) = (0.00, 0.00)
-    
     call hermitean_diagonalization(matrix,order,eigvals,eigvecs)
     write(*,*) 'Eigenvalues:'
     write(*,*) eigvals
-    write(*,*) 'Eigenvectors (columns):'
-    write(*,*) eigvecs
 
-end program
+
+    deallocate(matrix)
+    deallocate(eigvals)
+    deallocate(eigvecs)
+end program diagonalize
 
 subroutine hermitean_diagonalization(matrix,order,eigvals,eigvecs)
     IMPLICIT NONE
-    INTEGER order
+    COMPLEX*16, intent(in) :: matrix(order,order)
+    INTEGER, intent(in) :: order
+    REAL*8, intent(out) :: eigvals(order)
+    COMPLEX*16, intent(out) :: eigvecs(order,order)
     INTEGER LWMAX
     PARAMETER (LWMAX=1000)
     INTEGER INFO, LWORK
-    REAL*8 W(order), RWORK(3*order-2), eigvals(order)
-    COMPLEX*16 A(order,order), WORK(LWMAX)
-    COMPLEX*16 matrix(order,order), eigvecs(order,order)
+    REAL*8 RWORK(3*order-2)
+    COMPLEX*16, allocatable :: WORK(:)
 
-    A = matrix
+    allocate(WORK(LWMAX))
+    eigvecs = matrix
     LWORK=-1
-    call ZHEEV('V', 'U', order, A, order, W, WORK, LWORK, RWORK, INFO)
+    call ZHEEV('V', 'U', order, eigvecs, order, eigvals, WORK, LWORK, RWORK, INFO)
     LWORK = min(LWMAX, int(WORK(1)))
-    call ZHEEV('V', 'U', order, A, order, W, WORK, LWORK, RWORK, INFO)
+    deallocate(WORK)
+    allocate(WORK(LWORK))
+    call ZHEEV('V', 'U', order, eigvecs, order, eigvals, WORK, LWORK, RWORK, INFO)
     if(INFO == 0) then
-        eigvals = W
-        eigvecs = A
+        write(*,*) 'Diagonalization performed.'
     else
         write(*,*) 'Diagonalization failed.'
         return

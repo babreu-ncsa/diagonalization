@@ -1,8 +1,8 @@
 FC=gfortran
-FLDFLAGS=-llapack -lblas
-LIBS=-L/Users/babreu/NumericalLibraries/lapack-3.9.1
-
+FLDFLAGS=-llapack
+#LIBS=-L/<path to LAPACK>
+DEBUG=#-g
 SOURCE=diagonalize_zheev.f90
 
 all:
-	$(FC) $(SOURCE) $(LIBS) $(FLDFLAGS)
+	$(FC) $(DEBUG) $(SOURCE) $(LIBS) $(FLDFLAGS)
